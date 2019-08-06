@@ -1546,6 +1546,12 @@ def has_container_with_state(containers, state):
             return True
 
 
+def has_container_with_name(containers, name):
+    for container in containers:
+        if container.name == name:
+            return True
+
+
 def filter_services(filt, services, project):
     def should_include(service):
         for f in filt:
@@ -1553,6 +1559,11 @@ def filter_services(filt, services, project):
                 state = filt[f]
                 containers = project.containers([service.name], stopped=True)
                 if not has_container_with_state(containers, state):
+                    return False
+            if f == 'container_name':
+                container_name = filt[f]
+                containers = project.containers([service.name], stopped=True)
+                if not has_container_with_name(containers, container_name):
                     return False
             elif f == 'source':
                 source = filt[f]
